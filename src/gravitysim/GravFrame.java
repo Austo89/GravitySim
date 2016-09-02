@@ -29,6 +29,14 @@ public class GravFrame extends javax.swing.JFrame {
     // offset from the center of the universe
     private double panX = 0;
     private double panY = 0;
+    // current slider values
+    private double currMass;
+    private double currRadius;
+    private double currVX;
+    private double currVY;
+    
+    // scientific notation formatter
+    NumberFormat formatter = new DecimalFormat("0.#E0");
 
     /**
      * Creates new form GravFrame
@@ -39,6 +47,22 @@ public class GravFrame extends javax.swing.JFrame {
         bodies = new ArrayList();
         numberLabel.setText("No. of Obj = " + bodies.size());
         scaleLabel.setText("Scale: 1 px = " + scale);
+        
+        massSlider.setValue(248);
+        getCurrentMass();
+        massLabel.setText("Mass (kg) = " + formatter.format(currMass));
+        
+        radiusSlider.setValue(68);
+        getCurrentRadius();
+        radiusLabel.setText("Radius (m) = " + formatter.format(currRadius));
+        
+        vxSlider.setValue(0);
+        getCurrentVX();
+        vxLabel.setText("VX (m/s) = " + formatter.format(currVX));
+        
+        vySlider.setValue(0);
+        getCurrentVY();
+        vyLabel.setText("VY (m/s) = " + formatter.format(currVY));
 
         // activate timer event
         Timer timer = new Timer(10, new TimerListener());
@@ -57,19 +81,19 @@ public class GravFrame extends javax.swing.JFrame {
         paintPanel = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
         editPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        massField = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        vxField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        vyField = new javax.swing.JTextField();
+        massLabel = new javax.swing.JLabel();
+        vxLabel = new javax.swing.JLabel();
+        vyLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         gField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        rField = new javax.swing.JTextField();
+        radiusLabel = new javax.swing.JLabel();
         pauseButton = new javax.swing.JRadioButton();
         scaleLabel = new javax.swing.JLabel();
         numberLabel = new javax.swing.JLabel();
+        massSlider = new javax.swing.JSlider();
+        radiusSlider = new javax.swing.JSlider();
+        vxSlider = new javax.swing.JSlider();
+        vySlider = new javax.swing.JSlider();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -103,7 +127,7 @@ public class GravFrame extends javax.swing.JFrame {
         paintPanel.setLayout(paintPanelLayout);
         paintPanelLayout.setHorizontalGroup(
             paintPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 485, Short.MAX_VALUE)
+            .addGap(0, 390, Short.MAX_VALUE)
         );
         paintPanelLayout.setVerticalGroup(
             paintPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,25 +136,17 @@ public class GravFrame extends javax.swing.JFrame {
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        jLabel1.setText("Mass(kg)");
+        massLabel.setText("Mass(kg)");
 
-        massField.setText("6E24");
+        vxLabel.setText("Velocity X(m/s)");
 
-        jLabel2.setText("Velocity X(m/s)");
-
-        vxField.setText("0");
-
-        jLabel3.setText("Velocity Y(m/s)");
-
-        vyField.setText("0");
+        vyLabel.setText("Velocity Y(m/s)");
 
         jLabel4.setText("G const");
 
         gField.setText("6.675E-6");
 
-        jLabel5.setText("Radius(m)");
-
-        rField.setText("6E6");
+        radiusLabel.setText("Radius(m)");
 
         pauseButton.setText("Pause");
 
@@ -138,51 +154,91 @@ public class GravFrame extends javax.swing.JFrame {
 
         numberLabel.setText("No. of Obj =");
 
+        massSlider.setMaximum(400);
+        massSlider.setMinimum(10);
+        massSlider.setValue(60);
+        massSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                massSliderStateChanged(evt);
+            }
+        });
+
+        radiusSlider.setMaximum(120);
+        radiusSlider.setMinimum(10);
+        radiusSlider.setToolTipText("");
+        radiusSlider.setValue(60);
+        radiusSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                radiusSliderStateChanged(evt);
+            }
+        });
+
+        vxSlider.setMaximum(85);
+        vxSlider.setMinimum(-85);
+        vxSlider.setToolTipText("");
+        vxSlider.setValue(0);
+        vxSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                vxSliderStateChanged(evt);
+            }
+        });
+
+        vySlider.setMaximum(85);
+        vySlider.setMinimum(-85);
+        vySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                vySliderStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
             editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(editPanelLayout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(massLabel)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(editPanelLayout.createSequentialGroup()
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(massField)
-                    .addComponent(vxField)
-                    .addComponent(vyField)
                     .addComponent(gField)
-                    .addComponent(rField)
                     .addComponent(scaleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(editPanelLayout.createSequentialGroup()
                         .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel5)
+                            .addComponent(vxLabel)
+                            .addComponent(vyLabel)
+                            .addComponent(radiusLabel)
                             .addComponent(jLabel4)
                             .addComponent(pauseButton)
                             .addComponent(numberLabel))
-                        .addGap(0, 28, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(massSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(radiusSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(vxSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(vySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         editPanelLayout.setVerticalGroup(
             editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(editPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(massLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(massField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(massSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addComponent(radiusLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(vxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(radiusSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
+                .addComponent(vxLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(vyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(vxSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
+                .addComponent(vyLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(rField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(vySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -195,8 +251,6 @@ public class GravFrame extends javax.swing.JFrame {
                 .addComponent(scaleLabel)
                 .addContainerGap())
         );
-
-        vxField.getAccessibleContext().setAccessibleParent(this);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -228,10 +282,11 @@ public class GravFrame extends javax.swing.JFrame {
         int my = evt.getY();
 
         // get data from text fields
-        double iM = Double.parseDouble(massField.getText());
-        double iVX = Double.parseDouble(vxField.getText());
-        double iVY = Double.parseDouble(vyField.getText());
-        double iR = Double.parseDouble(rField.getText());
+        //double iM = Double.parseDouble(massField.getText());
+        double iM = currMass;
+        double iVX = currVX;
+        double iVY = currVY;
+        double iR = currRadius;
         double iDens = 5556;
 
         // create a new body object to place in the frame
@@ -274,9 +329,6 @@ public class GravFrame extends javax.swing.JFrame {
     private void paintPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_paintPanelMouseWheelMoved
         // TODO add your handling code here:
         // scientific notation formatter
-        NumberFormat formatter = new DecimalFormat();
-
-        formatter = new DecimalFormat("0.#E0");
         
         // scale up or down by 2x using the mousewheel
         if (evt.getWheelRotation() == 1) {
@@ -296,10 +348,11 @@ public class GravFrame extends javax.swing.JFrame {
         int mx = evt.getX();
         int my = evt.getY();
 
-        double iM = Double.parseDouble(massField.getText());
-        double iVX = Double.parseDouble(vxField.getText());
-        double iVY = Double.parseDouble(vyField.getText());
-        double iR = Double.parseDouble(rField.getText());
+        //double iM = Double.parseDouble(massField.getText());
+        double iM = currMass;
+        double iVX = currVX;
+        double iVY = currVY;
+        double iR = currRadius;
         double iDens = 5556;
 
         Body newBod = new Body(mx * scale + panX, my * scale + panY, iDens, 6, iR, iM, iVX, iVY);
@@ -310,6 +363,30 @@ public class GravFrame extends javax.swing.JFrame {
 
         bodies.add(newBod);
     }//GEN-LAST:event_paintPanelMouseDragged
+
+    private void massSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_massSliderStateChanged
+        // TODO add your handling code here:
+        getCurrentMass();
+        massLabel.setText("Mass (kg) = " + formatter.format(currMass));
+    }//GEN-LAST:event_massSliderStateChanged
+
+    private void radiusSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radiusSliderStateChanged
+        // TODO add your handling code here:
+        getCurrentRadius();
+        radiusLabel.setText("Radius (m) = " + formatter.format(currRadius));
+    }//GEN-LAST:event_radiusSliderStateChanged
+
+    private void vxSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_vxSliderStateChanged
+        // TODO add your handling code here:
+        getCurrentVX();
+        vxLabel.setText("VX (m/s) = " + formatter.format(currVX));
+    }//GEN-LAST:event_vxSliderStateChanged
+
+    private void vySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_vySliderStateChanged
+        // TODO add your handling code here:
+        getCurrentVY();
+        vyLabel.setText("VY (m/s) = " + formatter.format(currVY));
+    }//GEN-LAST:event_vySliderStateChanged
 
     // calculate the appropriate planet size
     public int findSize(Body bod) {
@@ -341,6 +418,35 @@ public class GravFrame extends javax.swing.JFrame {
     // updates the number of bodies displayed by the label
     public void updateNumberLabel(){
         numberLabel.setText("No. of Obj = " + bodies.size());
+    }
+    
+    // find current radius
+    public void getCurrentRadius(){
+        currRadius = Math.pow(10, radiusSlider.getValue()/10.0);
+    }
+    
+    //find current mass
+    public void getCurrentMass(){
+        currMass = Math.pow(10, massSlider.getValue()/10.0);
+    }
+    
+    //find current x velocity from slider
+    public void getCurrentVX(){
+        if(vxSlider.getValue() >= 0){
+            currVX = Math.pow(10, vxSlider.getValue()/10.0);
+        } else {
+            currVX = -1 * Math.pow(10, vxSlider.getValue()/-10.0);
+        }
+        
+    }
+    
+    //find current y velocity from slider
+    public void getCurrentVY(){
+        if(vxSlider.getValue() >= 0){
+            currVY = Math.pow(10, vySlider.getValue()/10.0);
+        } else {
+            currVY = -1 * Math.pow(10, vySlider.getValue()/-10.0);
+        }
     }
 
     // Timer listener class used to update the frame
@@ -485,19 +591,19 @@ public class GravFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel editPanel;
     private javax.swing.JTextField gField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField massField;
+    private javax.swing.JLabel massLabel;
+    private javax.swing.JSlider massSlider;
     private javax.swing.JLabel numberLabel;
     private javax.swing.JPanel paintPanel;
     private javax.swing.JRadioButton pauseButton;
-    private javax.swing.JTextField rField;
+    private javax.swing.JLabel radiusLabel;
+    private javax.swing.JSlider radiusSlider;
     private javax.swing.JLabel scaleLabel;
-    private javax.swing.JTextField vxField;
-    private javax.swing.JTextField vyField;
+    private javax.swing.JLabel vxLabel;
+    private javax.swing.JSlider vxSlider;
+    private javax.swing.JLabel vyLabel;
+    private javax.swing.JSlider vySlider;
     // End of variables declaration//GEN-END:variables
 }

@@ -55,7 +55,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="485" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="390" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -76,27 +76,32 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <Component id="massLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="massField" max="32767" attributes="0"/>
-                      <Component id="vxField" max="32767" attributes="0"/>
-                      <Component id="vyField" alignment="0" max="32767" attributes="0"/>
                       <Component id="gField" alignment="0" max="32767" attributes="0"/>
-                      <Component id="rField" alignment="0" max="32767" attributes="0"/>
                       <Component id="scaleLabel" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="vxLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="vyLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="radiusLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="pauseButton" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="numberLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="28" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="massSlider" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="radiusSlider" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="vxSlider" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="vySlider" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -107,21 +112,21 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <Component id="massLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="massField" min="-2" max="-2" attributes="0"/>
+                  <Component id="massSlider" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                  <Component id="radiusLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="vxField" min="-2" max="-2" attributes="0"/>
+                  <Component id="radiusSlider" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                  <Component id="vxLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="vyField" min="-2" max="-2" attributes="0"/>
+                  <Component id="vxSlider" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                  <Component id="vyLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="rField" min="-2" max="-2" attributes="0"/>
+                  <Component id="vySlider" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -138,39 +143,19 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="massLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Mass(kg)"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="massField">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="6E24"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="vxLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Velocity X(m/s)"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="vxField">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="0"/>
-          </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleParent" type="javax.accessibility.Accessible" editor="org.netbeans.modules.form.ComponentChooserEditor">
-              <ComponentRef name="Form"/>
-            </Property>
-          </AccessibilityProperties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel3">
+        <Component class="javax.swing.JLabel" name="vyLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Velocity Y(m/s)"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="vyField">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="0"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
@@ -183,14 +168,9 @@
             <Property name="text" type="java.lang.String" value="6.675E-6"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel5">
+        <Component class="javax.swing.JLabel" name="radiusLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Radius(m)"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="rField">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="6E6"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="pauseButton">
@@ -207,6 +187,47 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="No. of Obj ="/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JSlider" name="massSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="400"/>
+            <Property name="minimum" type="int" value="10"/>
+            <Property name="value" type="int" value="60"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="massSliderStateChanged"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JSlider" name="radiusSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="120"/>
+            <Property name="minimum" type="int" value="10"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="value" type="int" value="60"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="radiusSliderStateChanged"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JSlider" name="vxSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="85"/>
+            <Property name="minimum" type="int" value="-85"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="value" type="int" value="0"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="vxSliderStateChanged"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JSlider" name="vySlider">
+          <Properties>
+            <Property name="maximum" type="int" value="85"/>
+            <Property name="minimum" type="int" value="-85"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="vySliderStateChanged"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
