@@ -23,7 +23,7 @@ public class GravFrame extends javax.swing.JFrame {
     // array containing celestial objects
     ArrayList<Body> bodies;
     // variable gravitational constant, haha
-    private double G = 6.675E-6;
+    private double G = 6.675E-11;
     // scale of pixel to meters ratio
     private double scale = 1E6;
     // offset from the center of the universe
@@ -34,6 +34,7 @@ public class GravFrame extends javax.swing.JFrame {
     private double currRadius;
     private double currVX;
     private double currVY;
+    private int currSpeed;
     
     // scientific notation formatter
     NumberFormat formatter = new DecimalFormat("0.#E0");
@@ -43,6 +44,8 @@ public class GravFrame extends javax.swing.JFrame {
      */
     public GravFrame() {
         initComponents();
+        
+        //paintPanel = new JPanel();
         this.setFocusTraversalKeysEnabled(true);
         bodies = new ArrayList();
         numberLabel.setText("No. of Obj = " + bodies.size());
@@ -64,6 +67,10 @@ public class GravFrame extends javax.swing.JFrame {
         getCurrentVY();
         vyLabel.setText("VY (m/s) = " + formatter.format(currVY));
 
+        speedSlider.setValue(1000);
+        getCurrentSpeed();
+        speedLabel.setText("Speed = " + currSpeed + "x");
+        
         // activate timer event
         Timer timer = new Timer(10, new TimerListener());
         timer.start();
@@ -94,6 +101,25 @@ public class GravFrame extends javax.swing.JFrame {
         radiusSlider = new javax.swing.JSlider();
         vxSlider = new javax.swing.JSlider();
         vySlider = new javax.swing.JSlider();
+        speedLabel = new javax.swing.JLabel();
+        speedSlider = new javax.swing.JSlider();
+        topMenuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        saveMenuItem = new javax.swing.JMenuItem();
+        loadMenuItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        commonObjectMenu = new javax.swing.JMenu();
+        sunMenuItem = new javax.swing.JMenuItem();
+        mercuryMenuItem = new javax.swing.JMenuItem();
+        venusMenuItem = new javax.swing.JMenuItem();
+        earthMenuItem = new javax.swing.JMenuItem();
+        moonMenuItem = new javax.swing.JMenuItem();
+        marsMenuItem = new javax.swing.JMenuItem();
+        jupiterMenuItem = new javax.swing.JMenuItem();
+        saturnMenuItem = new javax.swing.JMenuItem();
+        uranusMenuItem = new javax.swing.JMenuItem();
+        neptuneMenuItem = new javax.swing.JMenuItem();
+        plutoMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -102,6 +128,7 @@ public class GravFrame extends javax.swing.JFrame {
             }
         });
 
+        paintPanel = new myPanel();
         paintPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 paintPanelMouseWheelMoved(evt);
@@ -127,11 +154,11 @@ public class GravFrame extends javax.swing.JFrame {
         paintPanel.setLayout(paintPanelLayout);
         paintPanelLayout.setHorizontalGroup(
             paintPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 391, Short.MAX_VALUE)
         );
         paintPanelLayout.setVerticalGroup(
             paintPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 413, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -144,7 +171,7 @@ public class GravFrame extends javax.swing.JFrame {
 
         jLabel4.setText("G const");
 
-        gField.setText("6.675E-6");
+        gField.setText("6.675E-11");
 
         radiusLabel.setText("Radius(m)");
 
@@ -191,6 +218,17 @@ public class GravFrame extends javax.swing.JFrame {
             }
         });
 
+        speedLabel.setText("Speed");
+
+        speedSlider.setMaximum(1000000);
+        speedSlider.setMinimum(1);
+        speedSlider.setValue(1000);
+        speedSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                speedSliderStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -214,10 +252,14 @@ public class GravFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(massSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(radiusSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(vxSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(vySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(speedLabel)
+                                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(massSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(radiusSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(vxSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(vySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(speedSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         editPanelLayout.setVerticalGroup(
@@ -240,17 +282,128 @@ public class GravFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(vySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(speedLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(speedSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pauseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(numberLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scaleLabel)
                 .addContainerGap())
         );
+
+        fileMenu.setText("File");
+
+        saveMenuItem.setText("Save");
+        fileMenu.add(saveMenuItem);
+
+        loadMenuItem.setText("Load");
+        fileMenu.add(loadMenuItem);
+
+        topMenuBar.add(fileMenu);
+
+        editMenu.setText("Edit");
+        topMenuBar.add(editMenu);
+
+        commonObjectMenu.setText("Common Objects");
+
+        sunMenuItem.setText("Sun");
+        sunMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sunMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(sunMenuItem);
+
+        mercuryMenuItem.setText("Mercury");
+        mercuryMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mercuryMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(mercuryMenuItem);
+
+        venusMenuItem.setText("Venus");
+        venusMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                venusMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(venusMenuItem);
+
+        earthMenuItem.setText("Earth");
+        earthMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                earthMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(earthMenuItem);
+
+        moonMenuItem.setText("Moon");
+        moonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moonMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(moonMenuItem);
+
+        marsMenuItem.setText("Mars");
+        marsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                marsMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(marsMenuItem);
+
+        jupiterMenuItem.setText("Jupiter");
+        jupiterMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jupiterMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(jupiterMenuItem);
+
+        saturnMenuItem.setText("Saturn");
+        saturnMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saturnMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(saturnMenuItem);
+
+        uranusMenuItem.setText("Uranus");
+        uranusMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uranusMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(uranusMenuItem);
+
+        neptuneMenuItem.setText("Neptune");
+        neptuneMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                neptuneMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(neptuneMenuItem);
+
+        plutoMenuItem.setText("Pluto");
+        plutoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plutoMenuItemActionPerformed(evt);
+            }
+        });
+        commonObjectMenu.add(plutoMenuItem);
+
+        topMenuBar.add(commonObjectMenu);
+
+        setJMenuBar(topMenuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -265,9 +418,12 @@ public class GravFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(paintPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSeparator1)
-            .addComponent(editPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(editPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(paintPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         pack();
@@ -287,21 +443,8 @@ public class GravFrame extends javax.swing.JFrame {
         double iVX = currVX;
         double iVY = currVY;
         double iR = currRadius;
-        double iDens = 5556;
-
-        // create a new body object to place in the frame
-        Body newBod = new Body(mx * scale + panX, my * scale + panY, iDens, 6, iR, iM, iVX, iVY);
         
-        // calculate and set correct density
-        iDens = findDens(newBod);
-        newBod.setDensity(iDens);
-        
-        // calculate correct size
-        int newSize = findSize(newBod);
-        newBod.setSize(newSize);
-
-        // add the new object to the array
-        bodies.add(newBod);
+        addBody(mx,my,iM,iR,iVX,iVY);
     }//GEN-LAST:event_paintPanelMouseClicked
 
     private void paintPanelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_paintPanelKeyPressed
@@ -353,15 +496,8 @@ public class GravFrame extends javax.swing.JFrame {
         double iVX = currVX;
         double iVY = currVY;
         double iR = currRadius;
-        double iDens = 5556;
 
-        Body newBod = new Body(mx * scale + panX, my * scale + panY, iDens, 6, iR, iM, iVX, iVY);
-        iDens = findDens(newBod);
-        newBod.setDensity(iDens);
-        int newSize = findSize(newBod);
-        newBod.setSize(newSize);
-
-        bodies.add(newBod);
+        addBody(mx,my,iM,iR,iVX,iVY);
     }//GEN-LAST:event_paintPanelMouseDragged
 
     private void massSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_massSliderStateChanged
@@ -387,6 +523,78 @@ public class GravFrame extends javax.swing.JFrame {
         getCurrentVY();
         vyLabel.setText("VY (m/s) = " + formatter.format(currVY));
     }//GEN-LAST:event_vySliderStateChanged
+
+    private void sunMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sunMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(303);
+        radiusSlider.setValue(88);
+    }//GEN-LAST:event_sunMenuItemActionPerformed
+
+    private void mercuryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mercuryMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(235);
+        radiusSlider.setValue(64);
+    }//GEN-LAST:event_mercuryMenuItemActionPerformed
+
+    private void venusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_venusMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(247);
+        radiusSlider.setValue(68);
+    }//GEN-LAST:event_venusMenuItemActionPerformed
+
+    private void earthMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_earthMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(248);
+        radiusSlider.setValue(68);
+    }//GEN-LAST:event_earthMenuItemActionPerformed
+
+    private void moonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moonMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(229);
+        radiusSlider.setValue(62);
+    }//GEN-LAST:event_moonMenuItemActionPerformed
+
+    private void marsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marsMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(238);
+        radiusSlider.setValue(65);
+    }//GEN-LAST:event_marsMenuItemActionPerformed
+
+    private void jupiterMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jupiterMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(273);
+        radiusSlider.setValue(78);
+    }//GEN-LAST:event_jupiterMenuItemActionPerformed
+
+    private void saturnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saturnMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(267);
+        radiusSlider.setValue(77);
+    }//GEN-LAST:event_saturnMenuItemActionPerformed
+
+    private void uranusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uranusMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(259);
+        radiusSlider.setValue(74);
+    }//GEN-LAST:event_uranusMenuItemActionPerformed
+
+    private void neptuneMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_neptuneMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(260);
+        radiusSlider.setValue(74);
+    }//GEN-LAST:event_neptuneMenuItemActionPerformed
+
+    private void plutoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plutoMenuItemActionPerformed
+        // TODO add your handling code here:
+        massSlider.setValue(222);
+        radiusSlider.setValue(61);
+    }//GEN-LAST:event_plutoMenuItemActionPerformed
+
+    private void speedSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_speedSliderStateChanged
+        // TODO add your handling code here:
+        getCurrentSpeed();
+        speedLabel.setText("Speed = " + currSpeed + "x");
+    }//GEN-LAST:event_speedSliderStateChanged
 
     // calculate the appropriate planet size
     public int findSize(Body bod) {
@@ -442,12 +650,39 @@ public class GravFrame extends javax.swing.JFrame {
     
     //find current y velocity from slider
     public void getCurrentVY(){
-        if(vxSlider.getValue() >= 0){
+        if(vySlider.getValue() >= 0){
             currVY = Math.pow(10, vySlider.getValue()/10.0);
         } else {
             currVY = -1 * Math.pow(10, vySlider.getValue()/-10.0);
         }
     }
+    
+    //find current speed from slider
+    public void getCurrentSpeed(){
+        currSpeed = speedSlider.getValue();
+    }
+    
+    // add a new body to the model
+    public void addBody(double mx, double my, double iM, double iR, double iVX, double iVY){
+//        int mx = evt.getX();
+//        int my = evt.getY();
+
+//        //double iM = Double.parseDouble(massField.getText());
+//        double iM = currMass;
+//        double iVX = currVX;
+//        double iVY = currVY;
+//        double iR = currRadius;
+        double iDens = 5556;
+
+        Body newBod = new Body(mx * scale + panX, my * scale + panY, iDens, 6, iR, iM, iVX, iVY);
+        iDens = findDens(newBod);
+        newBod.setDensity(iDens);
+        int newSize = findSize(newBod);
+        newBod.setSize(newSize);
+
+        bodies.add(newBod);
+    }
+    
 
     // Timer listener class used to update the frame
     public class TimerListener implements ActionListener {
@@ -461,7 +696,12 @@ public class GravFrame extends javax.swing.JFrame {
                 //wait
             } else {
                 //get gravity const
-                double grav = Double.parseDouble(gField.getText());
+                double grav = 6.657E-11;
+                try{
+                    grav = Double.parseDouble(gField.getText());
+                } catch (Exception ex){
+                    //failed to get gravity from text box. Leave as default
+                }
 
                 //calculate change in position, velocity, and accel
                 for (int i = 0; i < bodies.size(); i++) {
@@ -475,7 +715,7 @@ public class GravFrame extends javax.swing.JFrame {
                             double yd = bod2.getY() - bod.getY();
                             double d = Math.sqrt((xd * xd) + (yd * yd));
 
-                            if (d < bod.getR()) {
+                            if (d < bod.getR()+(bod2.getR()/2)) {
                                 //COLLISION!
                                 //update velocity and mass to conserve momentum
                                 double m1 = bod.getMass();
@@ -514,8 +754,8 @@ public class GravFrame extends javax.swing.JFrame {
                                 double accy = (yd / d) * acc;
 
                                 // change object velocities
-                                bod.setVX(bod.getVX() + accx);
-                                bod.setVY(bod.getVY() + accy);
+                                bod.setVX(bod.getVX() + ((accx/100.0)*currSpeed));
+                                bod.setVY(bod.getVY() + ((accy/100.0)*currSpeed));
                             }
 
                         }
@@ -523,16 +763,47 @@ public class GravFrame extends javax.swing.JFrame {
                 }
 
                 for (Body bod : bodies) {
-                    bod.setX(bod.getX() + bod.getVX());
-                    bod.setY(bod.getY() + bod.getVY());
+                    bod.setX(bod.getX() + (bod.getVX()/100)*currSpeed);
+                    bod.setY(bod.getY() + (bod.getVY()/100)*currSpeed);
                 }
 
             }
             
+//            //paint the bodies on the frame
+//            BufferedImage steve = new BufferedImage(paintPanel.getWidth(), paintPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+//            Graphics2D gg = steve.createGraphics();
+//            Graphics g = paintPanel.getGraphics();
+//            //paintPanel.repaint();
+//            //Graphics2D gg = (Graphics2D) g;
+//            gg.setColor(Color.BLACK);
+//            gg.fillRect(0, 0, paintPanel.getWidth(), paintPanel.getHeight());
+//            for (Body bod : bodies) {
+//
+//                gg.setColor(Color.WHITE);
+//                int showX = (int) ((bod.getX() - bod.getR() - panX) / scale);
+//                int showY = (int) ((bod.getY() - bod.getR() - panY) / scale);
+//                int size = (int) ((bod.getR() * 2) / scale) + 1;
+//                gg.drawOval(showX, showY, size, size);
+//                gg.fillOval(showX, showY, size, size);
+//            }
+//            g.drawImage(steve, 0, 0, null);
+            paintPanel.repaint();
+            
+            updateNumberLabel();
+        }
+
+    }
+
+    // JPanel sub-class used to override the paintComponent method
+    // used to avoid graphics bugs from painting directly to JPanel object
+    private class myPanel extends JPanel{
+        @Override public void paintComponent(Graphics g){
+            super.paintComponent(g);
+            
             //paint the bodies on the frame
             BufferedImage steve = new BufferedImage(paintPanel.getWidth(), paintPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
             Graphics2D gg = steve.createGraphics();
-            Graphics g = paintPanel.getGraphics();
+            //Graphics g = paintPanel.getGraphics();
             //paintPanel.repaint();
             //Graphics2D gg = (Graphics2D) g;
             gg.setColor(Color.BLACK);
@@ -547,12 +818,10 @@ public class GravFrame extends javax.swing.JFrame {
                 gg.fillOval(showX, showY, size, size);
             }
             g.drawImage(steve, 0, 0, null);
-            
-            updateNumberLabel();
         }
-
     }
-
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -589,18 +858,37 @@ public class GravFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu commonObjectMenu;
+    private javax.swing.JMenuItem earthMenuItem;
+    private javax.swing.JMenu editMenu;
     private javax.swing.JPanel editPanel;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JTextField gField;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JMenuItem jupiterMenuItem;
+    private javax.swing.JMenuItem loadMenuItem;
+    private javax.swing.JMenuItem marsMenuItem;
     private javax.swing.JLabel massLabel;
     private javax.swing.JSlider massSlider;
+    private javax.swing.JMenuItem mercuryMenuItem;
+    private javax.swing.JMenuItem moonMenuItem;
+    private javax.swing.JMenuItem neptuneMenuItem;
     private javax.swing.JLabel numberLabel;
     private javax.swing.JPanel paintPanel;
     private javax.swing.JRadioButton pauseButton;
+    private javax.swing.JMenuItem plutoMenuItem;
     private javax.swing.JLabel radiusLabel;
     private javax.swing.JSlider radiusSlider;
+    private javax.swing.JMenuItem saturnMenuItem;
+    private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JLabel scaleLabel;
+    private javax.swing.JLabel speedLabel;
+    private javax.swing.JSlider speedSlider;
+    private javax.swing.JMenuItem sunMenuItem;
+    private javax.swing.JMenuBar topMenuBar;
+    private javax.swing.JMenuItem uranusMenuItem;
+    private javax.swing.JMenuItem venusMenuItem;
     private javax.swing.JLabel vxLabel;
     private javax.swing.JSlider vxSlider;
     private javax.swing.JLabel vyLabel;
