@@ -533,7 +533,11 @@ public class GravFrame extends javax.swing.JFrame {
         double iVY = currVY;
         double iR = currRadius;
 
-        addBody(mx,my,iM,iR,iVX,iVY);
+        if(advObject){
+            addAdvanceObject(mx,my,iVX,iVY);
+        } else {
+            addBody(mx,my,iM,iR,iVX,iVY);
+        }
     }//GEN-LAST:event_paintPanelMouseDragged
 
     private void massSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_massSliderStateChanged
