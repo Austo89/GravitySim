@@ -35,6 +35,9 @@ public class GravFrame extends javax.swing.JFrame {
     private double currVX;
     private double currVY;
     private int currSpeed;
+    private boolean advObject;
+    private boolean solSystem;
+    private boolean earthMoon;
     
     // scientific notation formatter
     NumberFormat formatter = new DecimalFormat("0.#E0");
@@ -70,6 +73,9 @@ public class GravFrame extends javax.swing.JFrame {
         speedSlider.setValue(1000);
         getCurrentSpeed();
         speedLabel.setText("Speed = " + currSpeed + "x");
+        
+        advObject = false;
+        solSystem = false;
         
         // activate timer event
         Timer timer = new Timer(10, new TimerListener());
@@ -120,6 +126,9 @@ public class GravFrame extends javax.swing.JFrame {
         uranusMenuItem = new javax.swing.JMenuItem();
         neptuneMenuItem = new javax.swing.JMenuItem();
         plutoMenuItem = new javax.swing.JMenuItem();
+        advanceObjectMenu = new javax.swing.JMenu();
+        solSystemMenuItem = new javax.swing.JMenuItem();
+        earthMoonMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -311,7 +320,7 @@ public class GravFrame extends javax.swing.JFrame {
         editMenu.setText("Edit");
         topMenuBar.add(editMenu);
 
-        commonObjectMenu.setText("Common Objects");
+        commonObjectMenu.setText("Cmn. Objects");
 
         sunMenuItem.setText("Sun");
         sunMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -403,6 +412,26 @@ public class GravFrame extends javax.swing.JFrame {
 
         topMenuBar.add(commonObjectMenu);
 
+        advanceObjectMenu.setText("Adv. Objects");
+
+        solSystemMenuItem.setText("Sol System");
+        solSystemMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                solSystemMenuItemActionPerformed(evt);
+            }
+        });
+        advanceObjectMenu.add(solSystemMenuItem);
+
+        earthMoonMenuItem.setText("Earth & Moon");
+        earthMoonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                earthMoonMenuItemActionPerformed(evt);
+            }
+        });
+        advanceObjectMenu.add(earthMoonMenuItem);
+
+        topMenuBar.add(advanceObjectMenu);
+
         setJMenuBar(topMenuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -434,8 +463,8 @@ public class GravFrame extends javax.swing.JFrame {
         paintPanel.grabFocus();
 
         // save the click location to avoid repeat function calls
-        int mx = evt.getX();
-        int my = evt.getY();
+        double mx = evt.getX() * scale + panX;
+        double my = evt.getY() * scale + panY;
 
         // get data from text fields
         //double iM = Double.parseDouble(massField.getText());
@@ -444,7 +473,13 @@ public class GravFrame extends javax.swing.JFrame {
         double iVY = currVY;
         double iR = currRadius;
         
-        addBody(mx,my,iM,iR,iVX,iVY);
+        if(advObject){
+            addAdvanceObject(mx,my,iVX,iVY);
+        } else {
+            addBody(mx,my,iM,iR,iVX,iVY);
+        }
+        
+        
     }//GEN-LAST:event_paintPanelMouseClicked
 
     private void paintPanelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_paintPanelKeyPressed
@@ -488,8 +523,9 @@ public class GravFrame extends javax.swing.JFrame {
         // duplicate of mouse click code, should refactor to a new function
         paintPanel.grabFocus();
 
-        int mx = evt.getX();
-        int my = evt.getY();
+        //grab mouse coordinates, convert to space coordinates
+        double mx = evt.getX() * scale + panX;
+        double my = evt.getY() * scale + panY;
 
         //double iM = Double.parseDouble(massField.getText());
         double iM = currMass;
@@ -528,66 +564,88 @@ public class GravFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         massSlider.setValue(303);
         radiusSlider.setValue(88);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_sunMenuItemActionPerformed
 
     private void mercuryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mercuryMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(235);
         radiusSlider.setValue(64);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_mercuryMenuItemActionPerformed
 
     private void venusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_venusMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(247);
         radiusSlider.setValue(68);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_venusMenuItemActionPerformed
 
     private void earthMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_earthMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(248);
         radiusSlider.setValue(68);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_earthMenuItemActionPerformed
 
     private void moonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moonMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(229);
         radiusSlider.setValue(62);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_moonMenuItemActionPerformed
 
     private void marsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marsMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(238);
         radiusSlider.setValue(65);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_marsMenuItemActionPerformed
 
     private void jupiterMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jupiterMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(273);
         radiusSlider.setValue(78);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_jupiterMenuItemActionPerformed
 
     private void saturnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saturnMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(267);
         radiusSlider.setValue(77);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_saturnMenuItemActionPerformed
 
     private void uranusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uranusMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(259);
         radiusSlider.setValue(74);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_uranusMenuItemActionPerformed
 
     private void neptuneMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_neptuneMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(260);
         radiusSlider.setValue(74);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_neptuneMenuItemActionPerformed
 
     private void plutoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plutoMenuItemActionPerformed
         // TODO add your handling code here:
         massSlider.setValue(222);
         radiusSlider.setValue(61);
+        setSlidersEnabled(true);
+        resetBooleans();
     }//GEN-LAST:event_plutoMenuItemActionPerformed
 
     private void speedSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_speedSliderStateChanged
@@ -595,6 +653,23 @@ public class GravFrame extends javax.swing.JFrame {
         getCurrentSpeed();
         speedLabel.setText("Speed = " + currSpeed + "x");
     }//GEN-LAST:event_speedSliderStateChanged
+
+    private void solSystemMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_solSystemMenuItemActionPerformed
+        // TODO add your handling code here:
+        // Lets build our Solar System
+        setSlidersEnabled(false);
+        resetBooleans();
+        advObject = true;
+        solSystem = true;
+    }//GEN-LAST:event_solSystemMenuItemActionPerformed
+
+    private void earthMoonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_earthMoonMenuItemActionPerformed
+        // TODO add your handling code here:
+        setSlidersEnabled(false);
+        resetBooleans();
+        advObject = true;
+        earthMoon = true;
+    }//GEN-LAST:event_earthMoonMenuItemActionPerformed
 
     // calculate the appropriate planet size
     public int findSize(Body bod) {
@@ -664,17 +739,10 @@ public class GravFrame extends javax.swing.JFrame {
     
     // add a new body to the model
     public void addBody(double mx, double my, double iM, double iR, double iVX, double iVY){
-//        int mx = evt.getX();
-//        int my = evt.getY();
 
-//        //double iM = Double.parseDouble(massField.getText());
-//        double iM = currMass;
-//        double iVX = currVX;
-//        double iVY = currVY;
-//        double iR = currRadius;
         double iDens = 5556;
 
-        Body newBod = new Body(mx * scale + panX, my * scale + panY, iDens, 6, iR, iM, iVX, iVY);
+        Body newBod = new Body(mx, my, iDens, 6, iR, iM, iVX, iVY);
         iDens = findDens(newBod);
         newBod.setDensity(iDens);
         int newSize = findSize(newBod);
@@ -683,6 +751,60 @@ public class GravFrame extends javax.swing.JFrame {
         bodies.add(newBod);
     }
     
+    // create an advance object
+    public void addAdvanceObject(double mx, double my, double iVX, double iVY){
+        if(solSystem){
+            addSolSystem(mx,my,iVX,iVY);
+        }
+        if(earthMoon){
+            addEarthMoon(mx,my,iVX,iVY);
+        }
+    }
+    
+    //create sol system
+    public void addSolSystem(double mx, double my, double iVX, double iVY){
+        //Sun
+        addBody(mx,my,2E30,7E8,iVX,iVY);
+        //Mercury
+        addBody(mx+ 5.79E10,my,3.2E23,2.4E6,iVX,iVY+47.3E3);
+        //Venus
+        addBody(mx+1.08E11,my,4.8E24,6E6,iVX,iVY+35E3);
+        //Earth
+        addBody(mx+1.48E11,my,6E24,6.3E6,iVX,iVY+29.8E3);
+        //Mars
+        addBody(mx+2.27E11,my,6.4E23,3.4E6,iVX,iVY+24.1E3);
+        //Jupiter
+        addBody(mx+7.78E11,my,1.9E27,7E7,iVX,iVY+13.1E3);
+        //Saturn
+        addBody(mx+1.43E12,my,5.7E26,5.8E7,iVX,iVY+9.6E3);
+        //Uranus
+        addBody(mx+2.873E12,my,8.7E25,2.5E7,iVX,iVY+6.8E3);
+        //Nepture
+        addBody(mx+4.495E12,my,1E26,2.5E7,iVX,iVY+5.4E3);
+        //Pluto
+        addBody(mx+5.906E12,my,1.3E22,1.2E6,iVX,iVY+4.74E3);
+    }
+    
+    // create Earth and Moon system
+    public void addEarthMoon(double mx, double my, double iVX, double iVY){
+        //Earth
+        addBody(mx,my,6E24,6.3E6,iVX,iVY);
+        //Moon
+        addBody(mx+384.4E6,my,7.3E22,1.7E6,iVX,iVY+1.022E3);
+    }
+    
+    // toggle mass and radius sliders for advanced objects
+    public void setSlidersEnabled(boolean value){
+        massSlider.setEnabled(value);
+        radiusSlider.setEnabled(value);
+    }
+    
+    // reset boolean values
+    public void resetBooleans(){
+        advObject = false;
+        solSystem = false;
+        earthMoon = false;
+    }
 
     // Timer listener class used to update the frame
     public class TimerListener implements ActionListener {
@@ -753,9 +875,23 @@ public class GravFrame extends javax.swing.JFrame {
                                 double accx = (xd / d) * acc;
                                 double accy = (yd / d) * acc;
 
-                                // change object velocities
-                                bod.setVX(bod.getVX() + ((accx/100.0)*currSpeed));
-                                bod.setVY(bod.getVY() + ((accy/100.0)*currSpeed));
+                                // change object velocities, set speed of light as max
+                                if(bod.getVX() < 3E8 && bod.getVX() > -3E8){
+                                    bod.setVX(bod.getVX() + ((accx/100.0)*currSpeed));
+                                } else if (bod.getVX()>= 3E8){
+                                    bod.setVX(3E8);
+                                } else {
+                                    bod.setVX(-3E8);
+                                }
+                                
+                                if(bod.getVY() < 3E8 && bod.getVY() > -3E8){
+                                    bod.setVY(bod.getVY() + ((accy/100.0)*currSpeed));
+                                } else if(bod.getVY() >= 3E8){
+                                    bod.setVY(3E8);
+                                } else {
+                                    bod.setVY(-3E8);
+                                }
+                                
                             }
 
                         }
@@ -858,8 +994,10 @@ public class GravFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu advanceObjectMenu;
     private javax.swing.JMenu commonObjectMenu;
     private javax.swing.JMenuItem earthMenuItem;
+    private javax.swing.JMenuItem earthMoonMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JPanel editPanel;
     private javax.swing.JMenu fileMenu;
@@ -883,6 +1021,7 @@ public class GravFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem saturnMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JLabel scaleLabel;
+    private javax.swing.JMenuItem solSystemMenuItem;
     private javax.swing.JLabel speedLabel;
     private javax.swing.JSlider speedSlider;
     private javax.swing.JMenuItem sunMenuItem;

@@ -28,7 +28,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="commonObjectMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Common Objects"/>
+            <Property name="text" type="java.lang.String" value="Cmn. Objects"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="sunMenuItem">
@@ -117,6 +117,29 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="plutoMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="advanceObjectMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Adv. Objects"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="solSystemMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Sol System"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="solSystemMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="earthMoonMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Earth &amp; Moon"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="earthMoonMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
