@@ -13,15 +13,18 @@ direction. The means that objects can travel substantially faster than the speed
 
 A list of common objects have been added to the simulation. Clicking on the drop down and selecting an object sets the mass and radius to the approximate values of those objects. These currently include the Sun, the 8 planets, the Moon, and the only Kuiper Belt Object most people know, Pluto.
 
+A list of advance objects have been added to the simulation. Clicking on the drop down and selecing a system of objects turns off the 
+mass and radius sliders. Clicking a common object turns them back on. For instance, selecting the Sol System adds our own solar system
+where the user clicks with the correct distances from the sun and average velocities to maintain orbit.
+
 A speed slider allows the user to multiply the speed between 1x and 1,000,000x. Higher speeds tend to break the simulation. Notably, the acceleration of objects is a constant function but the objects have to be updated in steps. Smaller steps give a more accurate simulation. High speed multipliers increase the step size and cause orbits to destabalize faster. There is also an issue with collision. At high speeds, objects tend to pass entirely though each other without touching for an entire frame. The end result being that they slingshot each other across the solar system.
 
 ## Known Bugs/Future Features
-
-There is currently no limit on how much gravity will accelerate objects, making breaking the speed of light no problem, which is
-a problem.
 
 Objects of different densities don't merge very nicely when they collide. They take an average of the densities of the objects that
 collided, which isn't the most realistic.
 
 Objects don't break into smaller objects when colliding with sufficient force.
+
+Would like to add object tracking, making the screen centered around a selected object
 
