@@ -13,6 +13,10 @@ import javax.swing.*;
 import java.math.*;
 import java.text.*;
 import java.util.ArrayList;
+import javax.swing.filechooser.*;
+import java.io.*;
+import java.nio.file.*;
+import java.nio.charset.*;
 
 /**
  *
@@ -38,6 +42,9 @@ public class GravFrame extends javax.swing.JFrame {
     private boolean advObject;
     private boolean solSystem;
     private boolean earthMoon;
+    //file chooser for open and save options
+    final JFileChooser fc = new JFileChooser();
+    
     
     // scientific notation formatter
     NumberFormat formatter = new DecimalFormat("0.#E0");
@@ -76,6 +83,10 @@ public class GravFrame extends javax.swing.JFrame {
         
         advObject = false;
         solSystem = false;
+        earthMoon = false;
+        
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Solar System Files", "sol");
+        fc.setFileFilter(filter);
         
         // activate timer event
         Timer timer = new Timer(10, new TimerListener());
@@ -113,6 +124,8 @@ public class GravFrame extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         saveMenuItem = new javax.swing.JMenuItem();
         loadMenuItem = new javax.swing.JMenuItem();
+        resetMenuItem = new javax.swing.JMenuItem();
+        exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         commonObjectMenu = new javax.swing.JMenu();
         sunMenuItem = new javax.swing.JMenuItem();
@@ -310,10 +323,36 @@ public class GravFrame extends javax.swing.JFrame {
         fileMenu.setText("File");
 
         saveMenuItem.setText("Save");
+        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(saveMenuItem);
 
         loadMenuItem.setText("Load");
+        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(loadMenuItem);
+
+        resetMenuItem.setText("Reset");
+        resetMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(resetMenuItem);
+
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuItem);
 
         topMenuBar.add(fileMenu);
 
@@ -507,13 +546,22 @@ public class GravFrame extends javax.swing.JFrame {
     private void paintPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_paintPanelMouseWheelMoved
         // TODO add your handling code here:
         // scientific notation formatter
+        paintPanel.grabFocus();
         
         // scale up or down by 2x using the mousewheel
         if (evt.getWheelRotation() == 1) {
+            double mx = evt.getX() * scale + panX;
+            double my = evt.getY() * scale + panY;
             scale = scale * 2;
+            panX = mx - (paintPanel.getWidth()*scale)/2.0;
+            panY = my - (paintPanel.getHeight()*scale)/2.0;
             scaleLabel.setText("Scale: 1 px = " + formatter.format(scale));
         } else if (evt.getWheelRotation() == -1) {
+            double mx = evt.getX() * scale + panX;
+            double my = evt.getY() * scale + panY;
             scale = scale / 2;
+            panX = mx - (paintPanel.getWidth()*scale)/2.0;
+            panY = my - (paintPanel.getHeight()*scale)/2.0;
             scaleLabel.setText("Scale: 1 px = " + formatter.format(scale));
         }
     }//GEN-LAST:event_paintPanelMouseWheelMoved
@@ -675,6 +723,44 @@ public class GravFrame extends javax.swing.JFrame {
         earthMoon = true;
     }//GEN-LAST:event_earthMoonMenuItemActionPerformed
 
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void resetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetMenuItemActionPerformed
+        // TODO add your handling code here:
+        bodies = new ArrayList<Body>();
+    }//GEN-LAST:event_resetMenuItemActionPerformed
+
+    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
+        // TODO add your handling code here:
+        pauseButton.setSelected(true);
+        int returnVal = fc.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            String address = fc.getSelectedFile().getPath();
+            loadFile(address);
+        }
+        pauseButton.setSelected(false);
+    }//GEN-LAST:event_loadMenuItemActionPerformed
+
+    private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
+        // TODO add your handling code here:
+        pauseButton.setSelected(true);
+        int returnVal = fc.showSaveDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            String address = fc.getSelectedFile().getPath();
+            if(address.substring(address.length()-4,address.length()).equals(".sol")){
+                saveFile(address);
+            } else {
+                address = address + ".sol";
+                saveFile(address);
+            }
+            
+        }
+        pauseButton.setSelected(false);
+    }//GEN-LAST:event_saveMenuItemActionPerformed
+
     // calculate the appropriate planet size
     public int findSize(Body bod) {
         int size = (int) ((bod.getR() * 2) * 1E-6);
@@ -809,7 +895,67 @@ public class GravFrame extends javax.swing.JFrame {
         solSystem = false;
         earthMoon = false;
     }
+    
+    //save method
+    public void saveFile(String address){
+        ArrayList<String> writeOut = new ArrayList<>();
+        for(Body bod : bodies){
+            String line = "";
+            line = line + bod.getX() + ",";
+            line = line + bod.getY() + ",";
+            line = line + bod.getDensity() + ",";
+            line = line + bod.getSize() + ",";
+            line = line + bod.getR() + ",";
+            line = line + bod.getMass() + ",";
+            line = line + bod.getVX() + ",";
+            line = line + bod.getVY();
+            writeOut.add(line);
+        }
+        try{
+            Path file = Paths.get(address);
+            Files.write(file, writeOut, Charset.forName("UTF-8"));
+        }catch (Exception ex){
+            System.out.println("failed to write file.");
+        }
+        
+    }
 
+    // load method
+    public void loadFile(String address){
+        bodies = new ArrayList<Body>();
+        try{
+            Path file = Paths.get(address);
+            BufferedReader br = Files.newBufferedReader(file, Charset.forName("UTF-8"));
+            String sLine = br.readLine();
+            String[] line = sLine.split(",");
+            System.out.println("balls");
+            while(line != null){
+                double x = Double.valueOf(line[0]);
+                double y = Double.valueOf(line[1]);
+                double dens = Double.valueOf(line[2]);
+                int size = Integer.valueOf(line[3]);
+                double r = Double.valueOf(line[4]);
+                double mass = Double.valueOf(line[5]);
+                double vx = Double.valueOf(line[6]);
+                double vy = Double.valueOf(line[7]);
+                Body bod = new Body(x,y,dens,size,r,mass,vx,vy);
+                bodies.add(bod);
+                
+                //get next line
+                sLine = br.readLine();
+                if(sLine != null){
+                    line = sLine.split(",");
+                } else {
+                    break;
+                }
+            }
+        }catch (Exception ex){
+            System.out.println("failed to read file.");
+        }
+        panX = 0;
+        panY = 0;
+    }
+    
     // Timer listener class used to update the frame
     public class TimerListener implements ActionListener {
 
@@ -908,25 +1054,7 @@ public class GravFrame extends javax.swing.JFrame {
                 }
 
             }
-            
-//            //paint the bodies on the frame
-//            BufferedImage steve = new BufferedImage(paintPanel.getWidth(), paintPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-//            Graphics2D gg = steve.createGraphics();
-//            Graphics g = paintPanel.getGraphics();
-//            //paintPanel.repaint();
-//            //Graphics2D gg = (Graphics2D) g;
-//            gg.setColor(Color.BLACK);
-//            gg.fillRect(0, 0, paintPanel.getWidth(), paintPanel.getHeight());
-//            for (Body bod : bodies) {
-//
-//                gg.setColor(Color.WHITE);
-//                int showX = (int) ((bod.getX() - bod.getR() - panX) / scale);
-//                int showY = (int) ((bod.getY() - bod.getR() - panY) / scale);
-//                int size = (int) ((bod.getR() * 2) / scale) + 1;
-//                gg.drawOval(showX, showY, size, size);
-//                gg.fillOval(showX, showY, size, size);
-//            }
-//            g.drawImage(steve, 0, 0, null);
+
             paintPanel.repaint();
             
             updateNumberLabel();
@@ -1004,6 +1132,7 @@ public class GravFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem earthMoonMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JPanel editPanel;
+    private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JTextField gField;
     private javax.swing.JLabel jLabel4;
@@ -1022,6 +1151,7 @@ public class GravFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem plutoMenuItem;
     private javax.swing.JLabel radiusLabel;
     private javax.swing.JSlider radiusSlider;
+    private javax.swing.JMenuItem resetMenuItem;
     private javax.swing.JMenuItem saturnMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JLabel scaleLabel;
